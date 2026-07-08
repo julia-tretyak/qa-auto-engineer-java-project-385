@@ -43,5 +43,6 @@ sonar {
         property "sonar.organization", "julia-tretyak"
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.gradle.skipCompile", "true"
+        property "sonar.branch.name", "main"
     }
 }
