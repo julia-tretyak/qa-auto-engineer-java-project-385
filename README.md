@@ -6,4 +6,12 @@
 
 # QA Auto Engineer Java Project
 
-Автотесты для канбан-приложения на Java.
+Учебный проект по автоматизированному тестированию на Java.
+
+## Описание
+
+Автотесты для канбан-приложения с использованием Selenium WebDriver и JUnit 5.
+
+## Стек
+
+Java 21, Selenium, JUnit 5, Gradle, Docker

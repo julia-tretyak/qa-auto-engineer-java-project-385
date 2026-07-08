@@ -8,8 +8,6 @@ stop:
 	docker stop kanban-app
 
 test:
-	which google-chrome || which chromium || which chromium-browser || echo "NO CHROME FOUND"
-	google-chrome --version || chromium --version || echo "CANNOT RUN CHROME"
 	./gradlew clean test
 
 report:
