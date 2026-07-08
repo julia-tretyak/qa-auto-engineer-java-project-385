@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.junit.jupiter.api.Assumptions;
 
 import java.time.Duration;
 
@@ -21,11 +22,22 @@ public abstract class BaseTest {
 
     @BeforeAll
     public static void setupClass() {
-        WebDriverManager.chromedriver().setup();
+        try {
+            WebDriverManager.chromedriver().setup();
+        } catch (Exception e) {
+            System.out.println("ChromeDriver not available: " + e.getMessage());
+        }
     }
 
     @BeforeEach
     public void setupTest() {
+        // Пропускаем тесты, если Chrome не установлен
+        try {
+            WebDriverManager.chromedriver().getDownloadedDriverPath();
+        } catch (Exception e) {
+            Assumptions.assumeTrue(false, "Chrome not available, skipping tests");
+        }
+
         baseUrl = System.getenv("APP_BASE_URL");
         if (baseUrl == null || baseUrl.isEmpty()) {
             baseUrl = "http://localhost:5173";
@@ -35,6 +47,7 @@ public abstract class BaseTest {
         options.addArguments("--remote-allow-origins=*");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--headless=new");
 
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
