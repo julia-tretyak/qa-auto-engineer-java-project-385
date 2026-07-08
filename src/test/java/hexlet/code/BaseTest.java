@@ -35,7 +35,6 @@ public abstract class BaseTest {
         options.addArguments("--remote-allow-origins=*");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--headless=new"); // Всегда headless
 
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
