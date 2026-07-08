@@ -7,6 +7,12 @@ start-detached:
 stop:
 	docker stop kanban-app
 
+setup:
+	apt-get update -qq && apt-get install -y -qq wget gnupg
+	wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+	echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+	apt-get update -qq && apt-get install -y -qq google-chrome-stable
+
 test:
 	./gradlew clean test
 

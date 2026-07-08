@@ -18,28 +18,14 @@ public abstract class BaseTest {
     protected String baseUrl;
     protected LoginPage loginPage;
     protected MainPage mainPage;
-    protected static boolean driverAvailable = true;
 
     @BeforeAll
     public static void setupClass() {
-        try {
-            WebDriverManager.chromedriver().setup();
-            ChromeOptions options = new ChromeOptions();
-            options.addArguments("--headless=new");
-            options.addArguments("--no-sandbox");
-            options.addArguments("--disable-dev-shm-usage");
-            new ChromeDriver(options).quit();
-        } catch (Exception e) {
-            driverAvailable = false;
-            System.out.println("Chrome not available, all tests will be skipped");
-        }
+        WebDriverManager.chromedriver().setup();
     }
 
     @BeforeEach
     public void setupTest() {
-        org.junit.jupiter.api.Assumptions.assumeTrue(driverAvailable, 
-                "Skipping test: Chrome browser not available");
-
         baseUrl = System.getenv("APP_BASE_URL");
         if (baseUrl == null || baseUrl.isEmpty()) {
             baseUrl = "http://localhost:5173";
@@ -49,6 +35,7 @@ public abstract class BaseTest {
         options.addArguments("--remote-allow-origins=*");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--headless=new");
 
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
