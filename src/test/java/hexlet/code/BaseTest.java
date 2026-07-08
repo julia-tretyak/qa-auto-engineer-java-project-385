@@ -6,28 +6,40 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.time.Duration;
 
-@DisabledIfEnvironmentVariable(named = "CI", matches = "true", disabledReason = "Selenium tests require browser")
 public abstract class BaseTest {
 
     protected WebDriver driver;
     protected String baseUrl;
     protected LoginPage loginPage;
     protected MainPage mainPage;
+    protected static boolean driverAvailable = true;
 
     @BeforeAll
     public static void setupClass() {
-        WebDriverManager.chromedriver().setup();
+        try {
+            WebDriverManager.chromedriver().setup();
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--headless=new");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+            new ChromeDriver(options).quit();
+        } catch (Exception e) {
+            driverAvailable = false;
+            System.out.println("Chrome not available, all tests will be skipped");
+        }
     }
 
     @BeforeEach
     public void setupTest() {
+        org.junit.jupiter.api.Assumptions.assumeTrue(driverAvailable, 
+                "Skipping test: Chrome browser not available");
+
         baseUrl = System.getenv("APP_BASE_URL");
         if (baseUrl == null || baseUrl.isEmpty()) {
             baseUrl = "http://localhost:5173";
