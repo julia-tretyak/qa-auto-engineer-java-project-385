@@ -35,6 +35,12 @@ public abstract class BaseTest {
         options.addArguments("--remote-allow-origins=*");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
+        
+        // Headless для CI (GitHub Actions / Docker)
+        String ci = System.getenv("CI");
+        if (ci != null && ci.equals("true")) {
+            options.addArguments("--headless");
+        }
 
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
