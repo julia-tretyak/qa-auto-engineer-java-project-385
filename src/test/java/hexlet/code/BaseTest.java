@@ -32,7 +32,9 @@ public abstract class BaseTest {
         }
 
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--no-sandbox", "--headless");
+        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
 
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
