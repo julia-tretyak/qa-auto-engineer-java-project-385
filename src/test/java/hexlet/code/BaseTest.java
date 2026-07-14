@@ -2,9 +2,7 @@ package hexlet.code;
 
 import hexlet.code.page.LoginPage;
 import hexlet.code.page.MainPage;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -19,11 +17,6 @@ public abstract class BaseTest {
     protected LoginPage loginPage;
     protected MainPage mainPage;
 
-    @BeforeAll
-    public static void setupClass() {
-        WebDriverManager.chromedriver().setup();
-    }
-
     @BeforeEach
     public void setupTest() {
         baseUrl = System.getenv("APP_BASE_URL");
@@ -32,7 +25,14 @@ public abstract class BaseTest {
         }
 
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--no-sandbox", "--headless");
+        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        
+        // Headless для CI (где нет дисплея)
+        if (System.getenv("CI") != null || System.getenv("APP_BASE_URL") != null) {
+            options.addArguments("--headless");
+        }
 
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
