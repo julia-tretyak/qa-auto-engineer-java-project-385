@@ -28,14 +28,10 @@ public abstract class BaseTest {
         options.addArguments("--remote-allow-origins=*");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
-        
-        // Headless для CI (где нет дисплея)
-        if (System.getenv("CI") != null || System.getenv("APP_BASE_URL") != null) {
-            options.addArguments("--headless");
-        }
+        options.addArguments("--headless");
 
         driver = new ChromeDriver(options);
-        driver.manage().window().maximize();
+        driver.manage().window().setSize(new org.openqa.selenium.Dimension(1920, 1080));
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 
         loginPage = new LoginPage(driver);
