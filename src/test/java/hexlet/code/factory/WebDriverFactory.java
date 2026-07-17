@@ -9,10 +9,12 @@ public class WebDriverFactory {
 
     public static WebDriver create() {
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--no-sandbox", "--headless");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--headless=new");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--window-size=1920,1080");
 
-        WebDriver driver = new ChromeDriver(options);
-        driver.manage().window().setSize(new Dimension(1920, 1080));
-        return driver;
+        return new ChromeDriver(options);
     }
 }
