@@ -24,6 +24,7 @@ public abstract class BaseTest {
         }
 
         driver = WebDriverFactory.create();
+        driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 
         loginPage = new LoginPage(driver);
