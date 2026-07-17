@@ -69,20 +69,16 @@ public class StatusesPage {
     }
 
     public boolean isStatusInList(String name) {
-        try {
-            Thread.sleep(500);
-            List<WebElement> rows = driver.findElements(By.cssSelector(".RaDatagrid-row"));
-            for (WebElement row : rows) {
-                if (row.getText().contains(name)) return true;
-            }
-        } catch (Exception e) { return false; }
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".RaDatagrid-row")));
+        List<WebElement> rows = driver.findElements(By.cssSelector(".RaDatagrid-row"));
+        for (WebElement row : rows) {
+            if (row.getText().contains(name)) return true;
+        }
         return false;
     }
 
     public int getStatusCount() {
-        if (!driver.findElements(By.cssSelector(".RaList-noResults")).isEmpty()) {
-            return 0;
-        }
+        if (!driver.findElements(By.cssSelector(".RaList-noResults")).isEmpty()) return 0;
         List<WebElement> rows = driver.findElements(By.cssSelector(".RaDatagrid-row"));
         int count = 0;
         for (WebElement row : rows) {
@@ -130,8 +126,8 @@ public class StatusesPage {
     }
 
     public void selectAllStatuses() {
-        WebElement checkboxSpan = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".select-all")));
-        new Actions(driver).moveToElement(checkboxSpan).pause(200).click().pause(200).perform();
+        WebElement checkbox = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".select-all")));
+        new Actions(driver).moveToElement(checkbox).pause(200).click().perform();
         try { Thread.sleep(500); } catch (InterruptedException e) {}
     }
 
