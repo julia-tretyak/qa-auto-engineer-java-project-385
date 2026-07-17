@@ -1,7 +1,5 @@
 package hexlet.code;
 
-import hexlet.code.config.LocalConfig;
-import hexlet.code.config.TestConfig;
 import hexlet.code.factory.WebDriverFactory;
 import hexlet.code.page.LoginPage;
 import hexlet.code.page.MainPage;
@@ -20,8 +18,10 @@ public abstract class BaseTest {
 
     @BeforeEach
     public void setupTest() {
-        TestConfig config = new LocalConfig();
-        baseUrl = config.getBaseUrl();
+        baseUrl = System.getenv("APP_BASE_URL");
+        if (baseUrl == null || baseUrl.isEmpty()) {
+            baseUrl = "http://localhost:5173";
+        }
 
         driver = WebDriverFactory.create();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
