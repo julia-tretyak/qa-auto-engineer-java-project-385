@@ -1,13 +1,13 @@
 package hexlet.code;
 
+import hexlet.code.config.LocalConfig;
+import hexlet.code.config.TestConfig;
 import hexlet.code.factory.WebDriverFactory;
 import hexlet.code.page.LoginPage;
 import hexlet.code.page.MainPage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;
-
-import java.time.Duration;
 
 public abstract class BaseTest {
 
@@ -18,14 +18,10 @@ public abstract class BaseTest {
 
     @BeforeEach
     public void setupTest() {
-        baseUrl = System.getenv("APP_BASE_URL");
-        if (baseUrl == null || baseUrl.isEmpty()) {
-            baseUrl = "http://localhost:5173";
-        }
+        TestConfig config = new LocalConfig();
+        baseUrl = config.getBaseUrl();
 
         driver = WebDriverFactory.create();
-        driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 
         loginPage = new LoginPage(driver);
         mainPage = new MainPage(driver);

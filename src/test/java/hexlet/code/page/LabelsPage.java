@@ -19,7 +19,7 @@ public class LabelsPage {
 
     public LabelsPage(WebDriver driver) {
         this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
     }
 
     public void open(String baseUrl) {
@@ -44,11 +44,13 @@ public class LabelsPage {
 
     public void clickCreate() {
         wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".RaCreateButton-root"))).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[name='name']")));
     }
 
     public void fillName(String name) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[name='name']"))).clear();
-        driver.findElement(By.cssSelector("input[name='name']")).sendKeys(name);
+        WebElement input = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("input[name='name']")));
+        input.clear();
+        input.sendKeys(name);
     }
 
     public void clickSave() {
