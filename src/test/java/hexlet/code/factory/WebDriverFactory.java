@@ -13,31 +13,37 @@ import java.time.Duration;
 public class WebDriverFactory {
 
     public static WebDriver create() {
-        String ci = System.getenv("CI");
-        TestConfig config = (ci != null && ci.equals("true")) ? new CiConfig() : new LocalConfig();
+        TestConfig config = resolveConfig();
 
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--remote-allow-origins=*");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
 
         if (config.isHeadless()) {
             options.addArguments("--headless=new");
             options.addArguments("--disable-gpu");
+        } else {
+            options.addArguments("--remote-allow-origins=*");
         }
 
         WebDriver driver = new ChromeDriver(options);
-        
+
         if (config.isHeadless()) {
             driver.manage().window().setSize(new Dimension(1920, 1080));
         } else {
             driver.manage().window().maximize();
         }
-        
+
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
-        driver.manage().timeouts().scriptTimeout(Duration.ofSeconds(30));
 
         return driver;
+    }
+
+    private static TestConfig resolveConfig() {
+        if (System.getenv("APP_BASE_URL") != null) {
+            return new CiConfig();
+        }
+        return new LocalConfig();
     }
 }
