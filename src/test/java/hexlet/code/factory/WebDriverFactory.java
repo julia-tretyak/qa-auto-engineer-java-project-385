@@ -3,6 +3,7 @@ package hexlet.code.factory;
 import hexlet.code.config.CiConfig;
 import hexlet.code.config.LocalConfig;
 import hexlet.code.config.TestConfig;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -20,16 +21,10 @@ public class WebDriverFactory {
         TestConfig config = resolveConfig();
         log.info("Creating WebDriver with config: headless={}", config.isHeadless());
 
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
+        WebDriverManager.chromedriver().setup();
 
-        if (config.isHeadless()) {
-            options.addArguments("--headless=new");
-            options.addArguments("--disable-gpu");
-        } else {
-            options.addArguments("--remote-allow-origins=*");
-        }
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--no-sandbox", "--headless");
 
         WebDriver driver = new ChromeDriver(options);
 
