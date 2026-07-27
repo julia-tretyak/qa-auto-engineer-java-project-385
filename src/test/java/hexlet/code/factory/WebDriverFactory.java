@@ -24,7 +24,15 @@ public class WebDriverFactory {
         WebDriverManager.chromedriver().setup();
 
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--no-sandbox", "--headless");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--remote-allow-origins=*");
+
+        if (config.isHeadless()) {
+            options.addArguments("--headless=new");
+            options.addArguments("--disable-gpu");
+            options.addArguments("--window-size=1920,1080");
+        }
 
         WebDriver driver = new ChromeDriver(options);
 
@@ -42,9 +50,8 @@ public class WebDriverFactory {
     }
 
     private static TestConfig resolveConfig() {
-        String env = System.getProperty("env", "local");
-        log.info("Resolving config for env: {}", env);
-        if ("CI".equalsIgnoreCase(env)) {
+        // ВСЕГДА CiConfig в CI (где есть APP_BASE_URL)
+        if (System.getenv("APP_BASE_URL") != null) {
             return new CiConfig();
         }
         return new LocalConfig();
