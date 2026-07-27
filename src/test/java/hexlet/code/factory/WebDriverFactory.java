@@ -18,11 +18,14 @@ public class WebDriverFactory {
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--no-sandbox", "--headless");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--window-size=1920,1080");
 
         WebDriver driver = new ChromeDriver(options);
         driver.manage().window().setSize(new Dimension(1920, 1080));
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
+        driver.manage().timeouts().scriptTimeout(Duration.ofSeconds(30));
 
         log.info("WebDriver created successfully");
         return driver;
