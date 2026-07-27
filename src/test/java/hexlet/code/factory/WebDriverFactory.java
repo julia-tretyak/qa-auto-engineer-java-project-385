@@ -16,28 +16,12 @@ public class WebDriverFactory {
     public static WebDriver create() {
         log.info("Creating WebDriver");
 
-        boolean isCi = System.getenv("APP_BASE_URL") != null;
-
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
-
-        if (isCi) {
-            options.addArguments("--headless");
-        } else {
-            options.addArguments("--remote-allow-origins=*");
-        }
+        options.addArguments("--no-sandbox", "--headless");
 
         WebDriver driver = new ChromeDriver(options);
-
-        if (isCi) {
-            driver.manage().window().setSize(new Dimension(1920, 1080));
-        } else {
-            driver.manage().window().maximize();
-        }
-
+        driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
 
         log.info("WebDriver created successfully");
         return driver;
