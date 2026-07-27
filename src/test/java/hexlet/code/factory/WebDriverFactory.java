@@ -50,7 +50,7 @@ public class WebDriverFactory {
     }
 
     private static TestConfig resolveConfig() {
-        // ВСЕГДА CiConfig в CI (где есть APP_BASE_URL)
+        // В CI всегда задан APP_BASE_URL
         if (System.getenv("APP_BASE_URL") != null) {
             return new CiConfig();
         }

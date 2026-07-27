@@ -1,6 +1,7 @@
 package hexlet.code;
 
 import hexlet.code.config.LocalConfig;
+import hexlet.code.config.TestConfig;
 import hexlet.code.factory.WebDriverFactory;
 import hexlet.code.page.LoginPage;
 import hexlet.code.page.MainPage;
@@ -55,7 +56,9 @@ public abstract class BaseTest {
 
     @BeforeEach
     public void setupTest() {
-        baseUrl = new LocalConfig().getBaseUrl();
+        TestConfig config = new LocalConfig();
+        baseUrl = config.getBaseUrl();
+
         driver = WebDriverFactory.create();
 
         loginPage = new LoginPage(driver);
