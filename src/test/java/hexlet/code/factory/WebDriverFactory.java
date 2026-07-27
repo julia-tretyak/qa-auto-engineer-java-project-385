@@ -24,7 +24,6 @@ public class WebDriverFactory {
 
         if (isCi) {
             options.addArguments("--headless");
-            options.addArguments("--window-size=1920,1080");
         } else {
             options.addArguments("--remote-allow-origins=*");
         }
