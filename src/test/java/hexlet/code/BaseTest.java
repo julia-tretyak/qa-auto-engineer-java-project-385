@@ -6,6 +6,7 @@ import hexlet.code.page.LoginPage;
 import hexlet.code.page.MainPage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.extension.TestWatcher;
@@ -21,6 +22,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@DisabledIfEnvironmentVariable(named = "APP_BASE_URL", matches = ".*", disabledReason = "Selenium tests require browser")
 public abstract class BaseTest {
 
     protected WebDriver driver;
