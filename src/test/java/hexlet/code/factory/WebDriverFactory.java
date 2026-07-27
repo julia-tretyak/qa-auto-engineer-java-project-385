@@ -7,13 +7,18 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 
 public class WebDriverFactory {
 
+    private static final Logger log = LoggerFactory.getLogger(WebDriverFactory.class);
+
     public static WebDriver create() {
         TestConfig config = resolveConfig();
+        log.info("Creating WebDriver with config: headless={}", config.isHeadless());
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--no-sandbox");
@@ -37,11 +42,14 @@ public class WebDriverFactory {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
 
+        log.info("WebDriver created successfully");
         return driver;
     }
 
     private static TestConfig resolveConfig() {
-        if (System.getenv("APP_BASE_URL") != null) {
+        String env = System.getProperty("env", "local");
+        log.info("Resolving config for env: {}", env);
+        if ("CI".equalsIgnoreCase(env)) {
             return new CiConfig();
         }
         return new LocalConfig();

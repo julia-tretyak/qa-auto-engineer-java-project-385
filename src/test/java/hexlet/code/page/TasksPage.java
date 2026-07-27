@@ -1,5 +1,6 @@
 package hexlet.code.page;
 
+import hexlet.code.util.WaitUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -18,28 +19,39 @@ public class TasksPage {
 
     public TasksPage(WebDriver driver) {
         this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
     }
 
     public void open(String baseUrl) {
         this.baseUrl = baseUrl;
         driver.get(baseUrl + "/#/tasks");
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".RaList-content")));
+        WaitUtils.waitForElement(driver, By.cssSelector(".RaList-content"));
     }
 
     public void goToList() {
-        wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//a[contains(@href, '#/tasks') and contains(@class, 'MuiMenuItem-root')]"))).click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".RaList-content")));
+        WaitUtils.waitForClickable(driver,
+                By.xpath("//a[contains(@href, '#/tasks') and contains(@class, 'MuiMenuItem-root')]"))
+                .click();
+        WaitUtils.waitForElement(driver, By.cssSelector(".RaList-content"));
     }
 
     public void clickCreate() {
-        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".RaCreateButton-root"))).click();
+        WaitUtils.waitForClickable(driver, By.cssSelector(".RaCreateButton-root")).click();
     }
 
     public void fillTitle(String title) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[name='title']"))).clear();
+        WaitUtils.waitForElement(driver, By.cssSelector("input[name='title']")).clear();
         driver.findElement(By.cssSelector("input[name='title']")).sendKeys(title);
+    }
+
+    private void selectFromDropdown(int index) {
+        List<WebElement> comboboxes = driver.findElements(By.cssSelector("[role='combobox']"));
+        if (comboboxes.size() > index) {
+            comboboxes.get(index).click();
+            WaitUtils.waitForElement(driver, By.cssSelector("[role='listbox']"));
+            List<WebElement> options = driver.findElements(By.cssSelector("[role='option']"));
+            if (!options.isEmpty()) options.get(0).click();
+        }
     }
 
     public void clickSave() {
@@ -51,34 +63,18 @@ public class TasksPage {
     public void createTask(String title) {
         clickCreate();
         fillTitle(title);
-        // Выбираем статус и исполнителя из выпадающих списков
         selectFromDropdown(0);
         selectFromDropdown(1);
         clickSave();
-        try { Thread.sleep(2000); } catch (InterruptedException e) {}
         goToList();
     }
 
-    private void selectFromDropdown(int index) {
-        List<WebElement> comboboxes = driver.findElements(By.cssSelector("[role='combobox']"));
-        if (comboboxes.size() > index) {
-            comboboxes.get(index).click();
-            try { Thread.sleep(300); } catch (InterruptedException e) {}
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[role='listbox']")));
-            List<WebElement> options = driver.findElements(By.cssSelector("[role='option']"));
-            if (!options.isEmpty()) options.get(0).click();
-            try { Thread.sleep(300); } catch (InterruptedException e) {}
-        }
-    }
-
     public boolean isTaskOnBoard(String title) {
-        try {
-            Thread.sleep(1000);
-            List<WebElement> cards = driver.findElements(By.cssSelector(".MuiCard-root"));
-            for (WebElement card : cards) {
-                if (card.getText().contains(title)) return true;
-            }
-        } catch (Exception e) { return false; }
+        WaitUtils.waitForElement(driver, By.cssSelector(".MuiCard-root"));
+        List<WebElement> cards = driver.findElements(By.cssSelector(".MuiCard-root"));
+        for (WebElement card : cards) {
+            if (card.getText().contains(title)) return true;
+        }
         return false;
     }
 
@@ -92,7 +88,7 @@ public class TasksPage {
         for (WebElement card : cards) {
             if (card.getText().contains(title)) {
                 card.findElement(By.cssSelector(".RaEditButton-root")).click();
-                wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[name='title']")));
+                WaitUtils.waitForElement(driver, By.cssSelector("input[name='title']"));
                 return;
             }
         }
@@ -110,9 +106,9 @@ public class TasksPage {
 
     public void deleteTask(String title) {
         clickEditTask(title);
-        WebElement deleteBtn = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".ra-delete-button")));
+        WebElement deleteBtn = wait.until(ExpectedConditions.presenceOfElementLocated(
+                By.cssSelector(".ra-delete-button")));
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", deleteBtn);
-        try { Thread.sleep(1000); } catch (InterruptedException e) {}
         goToList();
     }
 }

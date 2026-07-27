@@ -1,5 +1,6 @@
 package hexlet.code.page;
 
+import hexlet.code.util.WaitUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -25,36 +26,28 @@ public class LabelsPage {
     public void open(String baseUrl) {
         this.baseUrl = baseUrl;
         driver.get(baseUrl + "/#/labels");
-        waitForPage();
-    }
-
-    private void waitForPage() {
-        wait.until(ExpectedConditions.or(
-                ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".RaDatagrid-root")),
-                ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".RaList-noResults")),
-                ExpectedConditions.visibilityOfElementLocated(By.cssSelector("body"))
-        ));
+        WaitUtils.waitForElement(driver, By.cssSelector(".RaDatagrid-root"));
     }
 
     public void goToList() {
-        wait.until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//a[contains(@href, '#/labels') and contains(@class, 'MuiMenuItem-root')]"))).click();
-        waitForPage();
+        WaitUtils.waitForClickable(driver,
+                By.xpath("//a[contains(@href, '#/labels') and contains(@class, 'MuiMenuItem-root')]"))
+                .click();
+        WaitUtils.waitForTableRows(driver);
     }
 
     public void clickCreate() {
-        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".RaCreateButton-root"))).click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[name='name']")));
+        WaitUtils.waitForClickable(driver, By.cssSelector(".RaCreateButton-root")).click();
+        WaitUtils.waitForElement(driver, By.cssSelector("input[name='name']"));
     }
 
     public void fillName(String name) {
-        WebElement input = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("input[name='name']")));
-        input.clear();
-        input.sendKeys(name);
+        WaitUtils.waitForElement(driver, By.cssSelector("input[name='name']")).clear();
+        driver.findElement(By.cssSelector("input[name='name']")).sendKeys(name);
     }
 
     public void clickSave() {
-        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[aria-label='Save']"))).click();
+        WaitUtils.waitForClickable(driver, By.cssSelector("button[aria-label='Save']")).click();
     }
 
     public void createLabel(String name) {
@@ -65,7 +58,7 @@ public class LabelsPage {
     }
 
     public boolean isLabelInList(String name) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".RaDatagrid-row")));
+        WaitUtils.waitForTableRows(driver);
         List<WebElement> rows = driver.findElements(By.cssSelector(".RaDatagrid-row"));
         for (WebElement row : rows) {
             if (row.getText().contains(name)) return true;
@@ -90,7 +83,7 @@ public class LabelsPage {
         for (WebElement row : rows) {
             if (row.getText().contains(name)) {
                 row.findElement(By.cssSelector(".column-name")).click();
-                wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[name='name']")));
+                WaitUtils.waitForElement(driver, By.cssSelector("input[name='name']"));
                 return;
             }
         }
@@ -108,26 +101,29 @@ public class LabelsPage {
 
     public void deleteLabel(String name) {
         clickEditLabel(name);
-        WebElement deleteBtn = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".ra-delete-button")));
+        WebElement deleteBtn = wait.until(ExpectedConditions.presenceOfElementLocated(
+                By.cssSelector(".ra-delete-button")));
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", deleteBtn);
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[text()='Delete']")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(
+                By.xpath("//button[text()='Delete']")));
         WebElement confirmBtn = driver.findElement(By.xpath("//button[text()='Delete']"));
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", confirmBtn);
         goToList();
     }
 
     public void selectAllLabels() {
-        WebElement checkbox = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".select-all")));
+        WebElement checkbox = wait.until(ExpectedConditions.presenceOfElementLocated(
+                By.cssSelector(".select-all")));
         new Actions(driver).moveToElement(checkbox).pause(200).click().perform();
-        try { Thread.sleep(500); } catch (InterruptedException e) {}
+        WaitUtils.sleep(500);
     }
 
     public void clickBulkDelete() {
-        WebElement toolbar = wait.until(ExpectedConditions.presenceOfElementLocated(
-                By.cssSelector("[data-test='bulk-actions-toolbar']")));
+        WaitUtils.sleep(500);
+        WebElement toolbar = driver.findElement(By.cssSelector("[data-test='bulk-actions-toolbar']"));
         WebElement deleteBtn = toolbar.findElement(By.cssSelector("button[aria-label='Delete']"));
         new Actions(driver).moveToElement(deleteBtn).pause(200).click().perform();
-        try { Thread.sleep(1000); } catch (InterruptedException e) {}
+        WaitUtils.sleep(500);
         goToList();
     }
 }
