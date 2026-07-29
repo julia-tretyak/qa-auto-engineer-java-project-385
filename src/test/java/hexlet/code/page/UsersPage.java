@@ -135,15 +135,15 @@ public class UsersPage {
         WebElement checkbox = wait.until(ExpectedConditions.presenceOfElementLocated(
                 By.cssSelector(".select-all")));
         new Actions(driver).moveToElement(checkbox).pause(200).click().perform();
-        WaitUtils.sleep(500);
+        WaitUtils.waitForAnimation(driver);
     }
 
     public void clickBulkDelete() {
-        WaitUtils.sleep(500);
+        WaitUtils.waitForAnimation(driver);
         WebElement toolbar = driver.findElement(By.cssSelector("[data-test='bulk-actions-toolbar']"));
         WebElement deleteBtn = toolbar.findElement(By.cssSelector("button[aria-label='Delete']"));
         new Actions(driver).moveToElement(deleteBtn).pause(200).click().perform();
-        WaitUtils.sleep(500);
+        WaitUtils.waitForAnimation(driver);
         goToList();
     }
 

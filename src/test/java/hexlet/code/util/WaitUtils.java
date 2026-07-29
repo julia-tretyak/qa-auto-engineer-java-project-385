@@ -36,9 +36,15 @@ public class WaitUtils {
         });
     }
 
-    public static void sleep(long millis) {
+    public static void waitForBulkActionsToolbar(WebDriver driver) {
+        getWait(driver).until(d -> 
+            !d.findElements(By.cssSelector("[data-test='bulk-actions-toolbar']")).isEmpty()
+        );
+    }
+
+    public static void waitForAnimation(WebDriver driver) {
         try {
-            Thread.sleep(millis);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

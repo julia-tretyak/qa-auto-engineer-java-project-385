@@ -1,5 +1,6 @@
 package hexlet.code;
 
+import hexlet.code.config.CiConfig;
 import hexlet.code.config.LocalConfig;
 import hexlet.code.config.TestConfig;
 import hexlet.code.factory.WebDriverFactory;
@@ -56,13 +57,21 @@ public abstract class BaseTest {
 
     @BeforeEach
     public void setupTest() {
-        TestConfig config = new LocalConfig();
+        TestConfig config = resolveConfig();
         baseUrl = config.getBaseUrl();
 
         driver = WebDriverFactory.create();
 
         loginPage = new LoginPage(driver);
         mainPage = new MainPage(driver);
+    }
+
+    private TestConfig resolveConfig() {
+        String env = System.getProperty("env", "local");
+        if ("CI".equalsIgnoreCase(env)) {
+            return new CiConfig();
+        }
+        return new LocalConfig();
     }
 
     @AfterEach
